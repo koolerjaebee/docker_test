@@ -1,0 +1,30 @@
+proxy:
+  title: Shiny App
+  # landing-page: app/basic
+  port: 8080
+  container-log-path: /container-logs
+  authentication: simple
+  admin-groups: admins
+  users:
+  - name: jack
+    password: password
+    groups: admins
+  - name: tim
+    password: password
+  docker:
+      internal-networking: true
+      container-network: shinyproxy-nginx_shinyproxy-net
+  specs:
+  - id: basic
+    display-name: Basic App
+    description: Application which demonstrates the basics of a Shiny app
+    container-cmd: ["R", "-e", "shiny::runApp('/root/basic')"] 
+    container-image: app_basic
+    container-network: shinyproxy-nginx_shinyproxy-net
+
+logging:
+  file: /logs/shinyproxy.log
+    
+server:
+  servlet:
+    context-path:  /
