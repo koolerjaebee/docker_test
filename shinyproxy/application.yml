@@ -1,8 +1,7 @@
 proxy:
   title: Shiny App
-  landing-page: app/basic
+  landing-page: /
   port: 8080
-  bind-address: 127.0.0.1
   container-log-path: /container-logs
   authentication: simple
   admin-groups: admins
@@ -14,8 +13,15 @@ proxy:
     password: password
   docker:
       internal-networking: true
-      container-network: my-net
+      container-network: shinyproxy-net
   specs:
+  # - id: 01_hello
+  #   display-name: Hello Shiny App
+  #   description: A simple reactive histogram
+  #   container-cmd: ["R", "-e", "shiny::runApp('/home/app')"]
+  #   container-image: registry.gitlab.com/analythium/shinyproxy-hello/hello:latest
+  #   logo-url: https://github.com/analythium/shinyproxy-1-click/raw/master/digitalocean/images/app-hist.png
+  #   access-groups: [admins, users]  
   - id: basic
     display-name: Basic App
     description: Application which demonstrates the basics of a Shiny app
@@ -24,4 +30,5 @@ proxy:
     container-network: "${proxy.docker.container-network}"
 
 logging:
-  file: /logs/shinyproxy.log
+  file:
+    name: logs/shinyproxy.log

@@ -11,8 +11,10 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/logs/:/var/log/nginx/
+    depends_on:
+      - shinyproxy
     networks:
-      - my-net
+      - nginx-net
   shinyproxy:
     image: openanalytics/shinyproxy
     # image: openanalytics/shinyproxy-snapshot
@@ -20,22 +22,29 @@ services:
     hostname: shinyproxy
     restart: unless-stopped
     depends_on:
-      - nginx
+      - app_basic
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./shinyproxy/application.yml:/opt/shinyproxy/application.yml
-    ports:
-      - 8080:8080
+      - ./shinyproxy/logs/:/opt/shinyproxy/logs/
+    networks:
+      - nginx-net
+      - shinyproxy-net
+    expose:
+      - 8080
   app_basic:
     container_name: app_basic
     platform: linux/amd64
     #image: openstat_app_basic:230413
+    stdin_open: true
     build:
       context: ./app/basic/.
     networks:
-      - my-net
+      - shinyproxy-net
     expose:
       - 3838
 networks:
-  my-net:
-    name: my-net
+  nginx-net:
+    driver: bridge
+  shinyproxy-net:
+    driver: bridge
