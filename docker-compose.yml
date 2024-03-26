@@ -1,12 +1,10 @@
 version: '3'
 services:
   # TODO add nginx service in front
-  nginx_proxy:
+  nginx:
     container_name: nginx
     build:
       context: ./nginx/.
-    depends_on:
-      - shinyproxy
     ports:
       - 80:80
     volumes:
@@ -14,33 +12,30 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/logs/:/var/log/nginx/
     networks:
-      shinyproxy-net:
+      - my-net
   shinyproxy:
     image: openanalytics/shinyproxy
     # image: openanalytics/shinyproxy-snapshot
     user: root:root
     hostname: shinyproxy
     restart: unless-stopped
+    depends_on:
+      - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./shinyproxy/application.yml:/opt/shinyproxy/application.yml
     ports:
       - 8080:8080
-    networks:
-      shinyproxy-net:
-        ipv4_address: 192.168.92.21
   app_basic:
     container_name: app_basic
     platform: linux/amd64
     #image: openstat_app_basic:230413
-    stdin_open: true
     build:
       context: ./app/basic/.
+    networks:
+      - my-net
     expose:
       - 3838
 networks:
-  shinyproxy-net:
-    ipam:
-      driver: default
-      config:
-        - subnet: "192.168.92.0/24"
+  my-net:
+    name: my-net
