@@ -13,22 +13,27 @@ proxy:
     password: password
   docker:
       internal-networking: true
-      container-network: shinyproxy-net
+      container-network: "docker_test_default"
   specs:
-  # - id: 01_hello
-  #   display-name: Hello Shiny App
-  #   description: A simple reactive histogram
-  #   container-cmd: ["R", "-e", "shiny::runApp('/home/app')"]
-  #   container-image: registry.gitlab.com/analythium/shinyproxy-hello/hello:latest
-  #   logo-url: https://github.com/analythium/shinyproxy-1-click/raw/master/digitalocean/images/app-hist.png
-  #   access-groups: [admins, users]  
+  - id: hello
+    display-name: Hello Shiny App
+    description: A simple reactive histogram
+    container-cmd: ["R", "-e", "shiny::runApp('/home/app')"]
+    container-image: docker_test-app_hello
+    container-network: "${proxy.docker.container-network}"
+    logo-url: https://github.com/analythium/shinyproxy-1-click/raw/master/digitalocean/images/app-hist.png
+    access-groups: [admins, users]  
   - id: basic
     display-name: Basic App
     description: Application which demonstrates the basics of a Shiny app
-    container-cmd: ["R", "-e", "shiny::runApp('/root/basic')"] 
-    container-image: app_basic
+    container-cmd: ["R", "-e", "shiny::runApp('/root/basic', host = '0.0.0.0', port = 3838)"] 
+    container-image: docker_test-app_basic
     container-network: "${proxy.docker.container-network}"
 
 logging:
   file:
     name: logs/shinyproxy.log
+    
+server:
+  servlet:
+    context-path:  /

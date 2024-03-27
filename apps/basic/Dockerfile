@@ -1,6 +1,7 @@
 FROM openstat_base:230917
 RUN R -e "install.packages(c('shinybrowser'))"
 RUN R -e "install.packages(c('emailjsr'))"
+RUN R -e "install.packages(c('survival'))"
 
 # copy the app to the image
 RUN mkdir /root/basic

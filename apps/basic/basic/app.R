@@ -12,6 +12,7 @@ library(ggplot2)
 library(GGally)
 library(jsmodule)
 library(survC1)
+library(survival)
 options(shiny.sanitize.errors = F, shiny.maxRequestSize = 5 * 1024^2)
 nfactor.limit <- 20
 
@@ -196,6 +197,7 @@ ui <- navbarPage("Basic statistics",
           boxUI("box")
         ),
         mainPanel(
+          optionUI("box"),
           withLoader(
             plotOutput("box_plot"),
             type = "html",
@@ -212,6 +214,7 @@ ui <- navbarPage("Basic statistics",
           barUI("bar")
         ),
         mainPanel(
+          optionUI("bar"),
           withLoader(
             plotOutput("bar_plot"),
             type = "html",
@@ -227,7 +230,8 @@ ui <- navbarPage("Basic statistics",
         sidebarPanel(
           lineUI("line")
         ),
-        mainPanel(
+        mainPanel(          
+          optionUI("line"),
           withLoader(plotOutput("line_plot"), type = "html", loader = "loader6"),
           ggplotdownUI("line")
         )
